@@ -1,0 +1,7 @@
+# Keep every text file LF in the repo so JSONL katas, YAML and docs are byte-stable across OSes.
+* text=auto eol=lf
+*.jsonl text eol=lf
+*.yml text eol=lf
+*.md text eol=lf
+*.png binary
+*.gif binary
