@@ -1,0 +1,47 @@
+{
+  "name": "detection-dojo",
+  "version": "0.1.0",
+  "description": "Rustlings for detection engineering: write a Sigma rule, get graded offline on true positives, false positives and evasion variants.",
+  "keywords": [
+    "sigma",
+    "detection-engineering",
+    "blue-team",
+    "soc",
+    "mitre-attack",
+    "security",
+    "training",
+    "kata",
+    "cli"
+  ],
+  "license": "MIT",
+  "author": "Marco Zuniga",
+  "type": "module",
+  "bin": {
+    "detection-dojo": "dist/cli.js",
+    "dojo": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "katas",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "node --test \"test/**/*.test.ts\"",
+    "validate-katas": "node src/cli.ts validate-kata --all",
+    "dojo": "node src/cli.ts",
+    "prepublishOnly": "npm run typecheck && npm run build && npm test && npm run validate-katas"
+  },
+  "dependencies": {
+    "yaml": "^2.8.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.0"
+  }
+}

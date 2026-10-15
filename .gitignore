@@ -1,0 +1,10 @@
+node_modules/
+dist/
+*.tgz
+.dojo-home/
+coverage/
+.DS_Store
+Thumbs.db
+*.log
+# local scratch rules a learner is working on
+/my-rules/
