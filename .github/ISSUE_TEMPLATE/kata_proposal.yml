@@ -1,0 +1,104 @@
+name: Kata proposal
+description: Propose a new detection kata before you build it, so we can agree on the lesson first.
+title: "[Kata]: "
+labels: ["kata-proposal"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A kata is one small, focused detection exercise: a scenario, a few attack events the rule must catch, benign look-alikes it must ignore, and evasion variants it should still catch.
+
+        Proposing first saves you work, because we can check that the idea is not already covered and that the Sigma subset dojo supports can express it. First time contributing? Mention it below and keep the scope small (a tier 1 kata is a perfect start).
+
+        Read `docs/KATA_FORMAT.md` ("Design a great kata") for what a good proposal looks like. All events must be synthetic and inert: no real malware, no real victim data, no real public IPs or domains.
+
+  - type: input
+    id: attack
+    attributes:
+      label: MITRE ATT&CK technique
+      description: One or more technique or sub-technique ids, comma separated.
+      placeholder: "T1053.005"
+    validations:
+      required: true
+
+  - type: textarea
+    id: scenario
+    attributes:
+      label: Scenario
+      description: Two to five sentences in plain language. What happened on the machine, and what does the learner have to notice? Describe behavior, not a tool name.
+    validations:
+      required: true
+
+  - type: input
+    id: logsource
+    attributes:
+      label: Logsource
+      description: The Sigma logsource the events come from, as product / category / service.
+      placeholder: "product: windows, category: process_creation"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: tier
+    attributes:
+      label: Suggested tier
+      description: Tier 1 is a first rule with a single idea. Tier 2 adds hard benign look-alikes and evasion variants. Tier 3 needs several ideas combined.
+      options:
+        - "1 (first rule)"
+        - "2 (look-alikes and evasions)"
+        - "3 (advanced)"
+        - "Not sure"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind
+      options:
+        - "write (author a rule from a skeleton)"
+        - "tune (fix a noisy or weak starter rule)"
+        - "Not sure"
+    validations:
+      required: true
+
+  - type: textarea
+    id: teaches
+    attributes:
+      label: Why does it teach something new?
+      description: Finish the sentence "After this kata a learner knows ...". Say how it differs from the katas that already exist (`dojo list` shows them).
+    validations:
+      required: true
+
+  - type: textarea
+    id: benign
+    attributes:
+      label: Benign look-alikes you have in mind
+      description: Harmless activity that shares tokens with the attack, and why it is harmless. These are the heart of a good kata, so a rough list is welcome.
+
+  - type: textarea
+    id: variants
+    attributes:
+      label: Evasion variants you have in mind
+      description: For example case changes, quote or caret insertion, a renamed binary, alternate path forms, reordered arguments, flag aliases, Unicode dashes.
+
+  - type: dropdown
+    id: author
+    attributes:
+      label: Who will write the kata?
+      options:
+        - I will write it
+        - I would like help getting started
+        - I am only suggesting the idea
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before you submit
+      options:
+        - label: I looked through `dojo list` and the open proposals, and this is not a duplicate.
+          required: true
+        - label: I understand that every event must be synthetic and inert, and that I will not copy rule text or events from other projects.
+          required: true

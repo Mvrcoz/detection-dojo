@@ -1,0 +1,70 @@
+name: Release
+
+# Publishing to npm requires the maintainer to set this up once:
+#   1. create an npm automation access token with publish rights, and
+#   2. store it as the repository secret NPM_TOKEN
+#      (Settings > Secrets and variables > Actions).
+# Until the secret exists this workflow stops at the publish step. That is
+# deliberate: tests and the build still run, nothing is published by accident.
+#
+# To release: bump "version" in package.json, move the Unreleased notes in
+# CHANGELOG.md under that version, then push a tag named v<version>.
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+  # Lets npm request a short-lived OIDC token so "--provenance" can attach a
+  # signed statement saying which commit and workflow built this tarball.
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Publishing a tarball whose version differs from the tag is the classic
+      # release mistake, and npm versions can never be reused.
+      - name: Check the tag matches package.json
+        run: |
+          version="$(node -p "require('./package.json').version")"
+          if [ "v${version}" != "${GITHUB_REF_NAME}" ]; then
+            echo "Tag ${GITHUB_REF_NAME} does not match package.json version ${version}." >&2
+            exit 1
+          fi
+          case "${version}" in
+            *-*)
+              echo "${version} is a prerelease. Publish prereleases by hand with an explicit --tag so they never become 'latest'." >&2
+              exit 1
+              ;;
+          esac
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run build
+
+      - name: Test
+        run: npm test
+
+      - name: Validate katas
+        run: npm run validate-katas
+
+      - name: Publish to npm
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

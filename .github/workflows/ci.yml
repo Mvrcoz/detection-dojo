@@ -1,0 +1,94 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Least privilege: every job here only reads the repository. Nothing in this
+# workflow needs a token that can write.
+permissions:
+  contents: read
+
+# A newer push to the same pull request makes the older run pointless.
+# Runs on main are never cancelled so every merge keeps its own result.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  # Development path: Node runs the TypeScript sources directly (type
+  # stripping needs Node >= 22.18), on every OS we claim to support.
+  test:
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    strategy:
+      # Let every combination finish so a Windows-only failure is not hidden
+      # behind a Linux one.
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node: [22, 24]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      # Proves the published build compiles, not only that the sources run.
+      - name: Build
+        run: npm run build
+
+      - name: Unit and end-to-end tests
+        run: npm test
+
+      # kata-pr-check: there is no separate workflow for kata pull requests.
+      # A PR that adds or edits a kata is validated right here, because
+      # validate-katas runs "dojo validate-kata --all": schema and size limits,
+      # the reference solution passing every threshold, the starter rule
+      # failing them, and no event shared between classes. Contributors get the
+      # same verdict locally with "dojo validate-kata <dir>".
+      - name: Validate katas
+        run: npm run validate-katas
+
+  # Published path: the package is compiled JavaScript that must run on the
+  # oldest supported Node. Node 20 cannot execute .ts files, so this job runs
+  # the BUILT CLI instead of the test suite.
+  node20-dist:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: List katas with the built CLI
+        run: node dist/cli.js list
+
+      - name: Validate katas with the built CLI
+        run: node dist/cli.js validate-kata --all
+
+      # The tarball must carry the compiled CLI and the curriculum, and must
+      # not leak sources or tests. "shell: bash" turns on pipefail so a failing
+      # "npm pack" is not masked by the checker reading an empty pipe.
+      - name: Check the package contents
+        shell: bash
+        run: npm pack --dry-run --json | node .github/scripts/check-package-contents.mjs

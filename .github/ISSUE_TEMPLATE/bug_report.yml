@@ -1,0 +1,101 @@
+name: Bug report
+description: Something in the dojo CLI or the Sigma evaluator behaves wrongly or crashes.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report this.
+
+        - Security problems (for example a path traversal or a way to make the tool run code) do **not** belong here. Use private vulnerability reporting as described in the repository's `SECURITY.md`.
+        - If you think a kata marks an event wrongly (a benign event that looks malicious, or a bad ATT&CK mapping), choose **Kata content** below. That is a normal bug for us, not a security report.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Where does the problem show up?
+      options:
+        - CLI (arguments, output, exit codes)
+        - Sigma evaluator (a rule matches or fails to match when it should not)
+        - Kata grading, loading or validation
+        - Kata content (a wrong label, note, hint or scenario)
+        - Documentation
+        - Something else
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Describe what you saw. Paste the exact error message if there is one; error messages are written for learners, so they help us see which check fired.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: The smallest set of commands that shows the problem. If a rule is involved, include its full YAML. If a particular event is involved, include that JSON line.
+      placeholder: |
+        1. dojo start <kata>
+        2. Save this rule as my-rule.yml: ...
+        3. dojo test <kata> my-rule.yml
+        4. ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: output
+    attributes:
+      label: Output
+      description: Output from the commands above. Adding `--json` to a command gives a stable, complete record. This box is formatted as code automatically.
+      render: shell
+
+  - type: input
+    id: dojo-version
+    attributes:
+      label: detection-dojo version
+      description: Output of `dojo --version`, or the commit hash if you run from a clone.
+      placeholder: "0.1.0"
+    validations:
+      required: true
+
+  - type: input
+    id: node-version
+    attributes:
+      label: Node.js version
+      description: Output of `node --version`.
+      placeholder: "v22.18.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options:
+        - Windows
+        - macOS
+        - Linux
+        - Other
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before you submit
+      options:
+        - label: I searched the existing issues and did not find this problem reported.
+          required: true
+        - label: This is not a security vulnerability (those go through private reporting, see `SECURITY.md`).
+          required: true

@@ -1,20 +1,18 @@
 /**
- * Sigma evaluator public API. STUB: the real implementation replaces this file.
- * See docs/ARCHITECTURE.md section 3.
+ * Sigma evaluator public API. See docs/ARCHITECTURE.md section 3 for the
+ * supported subset of the Sigma specification and its deliberate limits.
  */
-import type { CompiledRule, SigmaRule } from './types.ts';
+import { compileRule } from './compile.ts';
+import { parseRuleYaml } from './parse.ts';
+import type { CompiledRule } from './types.ts';
 
 export type * from './types.ts';
 
 /** Parse one Sigma rule document. Throws RuleParseError / UnsupportedFeatureError. */
-export function parseRuleYaml(_text: string): SigmaRule {
-  throw new Error('not implemented');
-}
+export { parseRuleYaml };
 
 /** Compile a parsed rule into a matcher. Throws RuleParseError / UnsupportedFeatureError. */
-export function compileRule(_rule: SigmaRule): CompiledRule {
-  throw new Error('not implemented');
-}
+export { compileRule };
 
 /** parseRuleYaml + compileRule. */
 export function loadRule(text: string): CompiledRule {

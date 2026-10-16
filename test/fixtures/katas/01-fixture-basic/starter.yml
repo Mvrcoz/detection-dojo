@@ -1,0 +1,12 @@
+title: Certutil download
+status: experimental
+description: Starting point. Replace the placeholder value so the rule catches certutil downloads.
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    Image|endswith: '\certutil.exe'
+    CommandLine|contains: 'replace-me'
+  condition: selection
+level: medium

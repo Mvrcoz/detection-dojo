@@ -1,0 +1,30 @@
+number: 1
+id: fixture-basic
+title: Certutil used as a downloader
+tier: 1
+kind: write
+attack:
+  - T1105
+tags:
+  - fixture
+  - process-creation
+logsource:
+  category: process_creation
+  product: windows
+scenario: |
+  A workstation ran `certutil.exe` in a way that pulls a file from a web server.
+  Certutil is a certificate tool that ships with Windows, so the process itself
+  is signed and common; what gives the activity away is how it is called.
+objective: >-
+  Detect certutil.exe fetching a remote file through its URL cache switch,
+  without alerting on its everyday certificate and hashing jobs.
+hints:
+  - Which signed Windows tool is being used for something other than certificates?
+  - The switch that talks to the network also appears in a harmless cache-cleanup command, so look for a URL as well.
+  - Attackers rename binaries and swap dashes for slashes; check the original file name and both switch styles.
+thresholds:
+  min_tpr: 1
+  max_fpr: 0
+  min_variants_caught: all
+estimated_minutes: 10
+author: detection-dojo fixtures

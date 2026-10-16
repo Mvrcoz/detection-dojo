@@ -1,0 +1,9 @@
+# Blank issues are off so every report arrives through a form that asks for
+# the details we always end up requesting anyway.
+blank_issues_enabled: false
+contact_links:
+  # Replace OWNER with the GitHub user or organisation that hosts this
+  # repository. Contact links must be absolute URLs, so this cannot be relative.
+  - name: Questions and ideas
+    url: https://github.com/OWNER/detection-dojo/discussions
+    about: Ask how to approach a kata, share a rule you are proud of, or float an idea before it becomes an issue.

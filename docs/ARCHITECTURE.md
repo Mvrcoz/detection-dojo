@@ -84,7 +84,7 @@ A selection that is empty, or a map with no entries, is a `RuleParseError`.
 
 ### 3.4 Conditions
 
-Grammar, lowest to highest precedence: `or`, `and`, `not`, then atoms. Atoms: a selection name; `( expr )`; `1 of <pattern>`, `any of <pattern>`, `all of <pattern>` where `<pattern>` is `them` or a selection-name pattern with `*` wildcards (`selection_*`, `*_filter`). Keywords are case-insensitive. A pipe (`|`) in a condition means aggregation (see 3.6). Referencing an undefined selection is a `RuleParseError` at compile time naming it and listing the defined ones. An `of` pattern that matches no selection is a `RuleParseError`. A selection never referenced by the condition is a compile **warning** (`CompiledRule.warnings`), not an error.
+Grammar, lowest to highest precedence: `or`, `and`, `not`, then atoms. Atoms: a selection name; `( expr )`; `1 of <pattern>`, `any of <pattern>`, `all of <pattern>` where `<pattern>` is `them` or a selection-name pattern with `*` wildcards (`selection_*`, `*_filter`). Keywords are case-insensitive. A pipe (`|`) in a condition means aggregation (see 3.6). Referencing an undefined selection is a `RuleParseError` at compile time naming it and listing the defined ones. An `of` pattern that matches no selection is a `RuleParseError`. A selection never referenced by the condition is a compile **warning** (`CompiledRule.warnings`), not an error. Every entry in `CompiledRule.warnings` has the form `<id>: <message>` where `<id>` is a stable kebab-case identifier (currently only `unreferenced-selection`); the CLI parses the id to group and filter warnings.
 
 ### 3.5 Result
 
