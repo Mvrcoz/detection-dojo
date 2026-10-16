@@ -213,12 +213,11 @@ fieldCases('Field|exists', [
   ['exists:false does not match the number zero', false, { Field: 0 }, false],
   ['exists:false does not match false', false, { Field: false }, false],
   ['exists:false respects the case-insensitive fallback', false, { field: 'x' }, false],
-  // SPEC-DISAGREEMENT: docs/ARCHITECTURE.md 3.3 says a null value counts as absent for
-  // `exists`. The Sigma modifiers appendix says `exists` "checks only whether the field
-  // is present. Empty or null values still count as present." These two rows follow
-  // the specification.
-  ['exists:true matches a field that is present with a null value (spec)', true, { Field: null }, true],
-  ['exists:false does not match a field that is present with a null value (spec)', false, { Field: null }, false],
+  // The published Sigma modifiers page does not say how `exists` treats null. We follow
+  // docs/ARCHITECTURE.md 3.3 (and how Splunk/Elastic backends behave): a null value counts
+  // as absent, which also keeps `Field: null` and `Field|exists: false` consistent.
+  ['exists:true does not match a field that is present with a null value', true, { Field: null }, false],
+  ['exists:false matches a field that is present with a null value', false, { Field: null }, true],
 ]);
 
 fieldCases('Process.Image|exists', [

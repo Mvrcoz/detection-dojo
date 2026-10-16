@@ -63,7 +63,7 @@ describe('windash', () => {
     assert.deepEqual(windashSites('-param-name'), [0]);
     assert.deepEqual(windashSites('powershell -enc abc'), [11]);
     assert.deepEqual(windashSites('a - b'), []);
-    assert.deepEqual(windashSites('c:\\x /c dir /s'), [6, 12]);
+    assert.deepEqual(windashSites('c:\\x /c dir /s'), [5, 12]);
     assert.deepEqual(windashSites('no-dash-here'), []);
   });
 

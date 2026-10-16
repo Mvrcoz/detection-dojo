@@ -162,6 +162,9 @@ export function parseModifierChain(key: string, path: string): ModifierChain {
     const isEncoding = transform === 'base64' || transform === 'base64offset';
     const isUtf16 = !isEncoding && transform !== 'windash';
     if (transforms.includes(transform)) fail(`The modifier '|${written}' is used twice in '${key}'.`);
+    if (isEncoding && state.mode !== undefined) {
+      fail(`'|${written}' must come before '|${state.mode}' in '${key}' (write '${field}|${written}|${state.mode}'), because the transforms apply left to right.`);
+    }
     if (isEncoding && transforms.some((t) => t === 'base64' || t === 'base64offset')) {
       fail(`Use either '|base64' or '|base64offset' in '${key}', not both.`);
     }
@@ -203,7 +206,8 @@ export function parseModifierChain(key: string, path: string): ModifierChain {
       case 'utf16be':
       case 'utf16': {
         const following = modifiers[index + 1];
-        if (following !== 'base64' && following !== 'base64offset') {
+        const chained = following === 'utf16le' || following === 'utf16be' || following === 'utf16' || following === 'wide';
+        if (following !== 'base64' && following !== 'base64offset' && !chained) {
           fail(
             `'|${modifier}' only makes sense in front of '|base64' or '|base64offset', ` +
               `for example '${field}|${modifier}|base64offset|contains' (found in '${key}').`,

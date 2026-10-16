@@ -118,7 +118,7 @@ describe('glob matching', () => {
   });
 
   it('stays fast on a long subject with many partial matches', () => {
-    const subject = 'ab'.repeat(30_000) + 'c';
+    const subject = 'ab'.repeat(30_000) + 'xabc';
     const test = compilePattern(parseWildcards('*ab?ab*c'), 'equals', false);
     const started = performance.now();
     assert.equal(test(subject), true);

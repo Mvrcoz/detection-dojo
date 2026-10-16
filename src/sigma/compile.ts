@@ -38,8 +38,9 @@ function anyOf(matchers: readonly Matcher[]): Matcher {
 function compileMap(map: Record<string, unknown>, path: string, budget: PatternBudget): CompiledEntry {
   const entries = Object.entries(map);
   if (entries.length === 0) {
+    const name = /^detection\.([^.[]+)/.exec(path)?.[1] ?? path;
     throw new RuleParseError(
-      'This selection is an empty map. Give it at least one field to match, for example `Image|endswith: \'\\cmd.exe\'`.',
+      `Selection '${name}' contains an empty map. Give it at least one field to match, for example \`Image|endswith: '\\cmd.exe'\`.`,
       path,
     );
   }
