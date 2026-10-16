@@ -108,7 +108,7 @@ function staticChecks(file: string, rule: SigmaRule, kata: Kata | undefined): Fi
         warn('match-everything', 'A keyword of only wildcards matches every event.', path);
       }
       // Pure punctuation such as the shell redirect '>&' is a specific token, not a word that appears by accident.
-      if (matchType === 'contains' && !/[*?]/.test(value) && value.length > 0 && value.length < 4 && /[p{L}p{N}]/u.test(value)) {
+      if (matchType === 'contains' && !/[*?]/.test(value) && value.length > 0 && value.length < 4 && /[\p{L}\p{N}]/u.test(value)) {
         warn('broad-short-contains', `'${value}' is only ${value.length} character(s) long; as a substring it will match far more than you intend.`, path);
       }
       if (isRegex) {
