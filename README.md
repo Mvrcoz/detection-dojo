@@ -16,7 +16,7 @@ A rule that catches the attack but also fires on harmless look-alikes is a bad r
 You need [Node.js](https://nodejs.org) 20 or newer and git.
 
 ```bash
-git clone https://github.com/OWNER/detection-dojo.git
+git clone https://github.com/mvrcoz/detection-dojo.git
 cd detection-dojo
 npm install
 npm run build

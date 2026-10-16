@@ -15,6 +15,14 @@
   ],
   "license": "MIT",
   "author": "Marco Zuniga",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mvrcoz/detection-dojo.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mvrcoz/detection-dojo/issues"
+  },
+  "homepage": "https://github.com/mvrcoz/detection-dojo#readme",
   "type": "module",
   "bin": {
     "detection-dojo": "dist/cli.js",

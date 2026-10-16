@@ -2,8 +2,7 @@
 # the details we always end up requesting anyway.
 blank_issues_enabled: false
 contact_links:
-  # Replace OWNER with the GitHub user or organisation that hosts this
-  # repository. Contact links must be absolute URLs, so this cannot be relative.
+  # Contact links must be absolute URLs. Enable Discussions in the repository settings.
   - name: Questions and ideas
-    url: https://github.com/OWNER/detection-dojo/discussions
+    url: https://github.com/mvrcoz/detection-dojo/discussions
     about: Ask how to approach a kata, share a rule you are proud of, or float an idea before it becomes an issue.
