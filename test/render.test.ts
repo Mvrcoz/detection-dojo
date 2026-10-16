@@ -131,3 +131,19 @@ describe('renderTable and truncate', () => {
     assert.equal(visibleLength(truncate('x'.repeat(50), 10)), 10);
   });
 });
+
+describe('wrapWords', () => {
+  it('wraps on word boundaries without losing text', async () => {
+    const { wrapWords } = await import('../src/render/scorecard.ts');
+    const text = 'Lists local accounts. "user" without "/add" creates nothing at all, so it is benign.';
+    const lines = wrapWords(text, 30);
+    assert.ok(lines.length > 1);
+    assert.ok(lines.every((line) => [...line].length <= 30));
+    assert.equal(lines.join(' '), text);
+  });
+
+  it('keeps a word that is longer than the width on its own line', async () => {
+    const { wrapWords } = await import('../src/render/scorecard.ts');
+    assert.deepEqual(wrapWords('a verylongwordthatcannotsplit b', 8), ['a', 'verylongwordthatcannotsplit', 'b']);
+  });
+});

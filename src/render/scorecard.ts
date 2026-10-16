@@ -103,6 +103,22 @@ function requiredVariants(kata: Kata, total: number): number {
   return wanted === 'all' ? total : wanted;
 }
 
+/** Greedy word wrap to `width` columns; words longer than the width stay whole. */
+export function wrapWords(text: string, width: number): string[] {
+  const lines: string[] = [];
+  let current = '';
+  for (const word of text.split(/\s+/).filter(Boolean)) {
+    if (current !== '' && [...current].length + 1 + [...word].length > width) {
+      lines.push(current);
+      current = word;
+    } else {
+      current = current === '' ? word : `${current} ${word}`;
+    }
+  }
+  if (current !== '') lines.push(current);
+  return lines;
+}
+
 export interface ScorecardOptions {
   verbose?: boolean;
   /** Attempts so far, from the learner's progress file. */
@@ -164,7 +180,12 @@ export function renderScorecard(kata: Kata, result: GradeResult, options: Scorec
     for (const labeled of events.slice(0, cap)) {
       lines.push(`    ${dim(`line ${String(labeled.line).padStart(2)}`)}  ${summarizeEvent(labeled.event, inner)}`);
       const extra = detail(labeled);
-      if (extra !== undefined) lines.push(`             ${cyan(sym.arrow)} ${truncate(extra, inner)}`);
+      if (extra !== undefined) {
+        // Notes are the teaching content, so wrap them rather than cutting them off.
+        wrapWords(extra, inner - 3).forEach((part, index) =>
+          lines.push(index === 0 ? `             ${cyan(sym.arrow)} ${part}` : `                ${part}`),
+        );
+      }
     }
     if (events.length > cap) lines.push(`    ${dim(`... and ${events.length - cap} more (use --verbose)`)}`);
   };
