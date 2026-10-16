@@ -1,0 +1,32 @@
+title: Script file written to the IIS web root by an unexpected process
+id: 56685bbd-a5cf-48b3-88fc-7d12eb753cb7
+status: stable
+description: Detects server-side script files created under the IIS web root by anything other than Web Deploy.
+author: detection-dojo contributors
+date: 2026/10/15
+tags:
+  - attack.persistence
+  - attack.t1505.003
+logsource:
+  category: file_event
+  product: windows
+detection:
+  selection_webroot:
+    TargetFilename|contains: '\inetpub\wwwroot\'
+  selection_script:
+    TargetFilename|endswith:
+      - '.aspx'
+      - '.ashx'
+      - '.asmx'
+      - '.asp'
+      - '.php'
+      - '.jsp'
+      - '.cshtml'
+  filter_deploy:
+    Image:
+      - 'C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe'
+      - 'C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploysvc.exe'
+  condition: selection_webroot and selection_script and not filter_deploy
+falsepositives:
+  - Deployment through another approved tool; add its full path as a filter
+level: high

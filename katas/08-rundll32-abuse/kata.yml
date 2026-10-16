@@ -1,0 +1,33 @@
+number: 8
+id: rundll32-abuse
+title: The DLL launcher that launches the wrong DLL
+tier: 2
+kind: write
+attack:
+  - T1218.011
+tags:
+  - defense-evasion
+  - execution
+  - windows
+  - lolbin
+logsource:
+  category: process_creation
+  product: windows
+scenario: |
+  `rundll32.exe` loads a DLL and calls one of its exported functions. Windows uses it constantly, for
+  control panel applets, printer setup, locking the screen. Because it is signed and everywhere,
+  attackers use it to run their own DLLs or even inline script.
+
+  Hundreds of legitimate rundll32 command lines exist. The task is to separate "Windows calling Windows"
+  from "rundll32 loading something an attacker could have put there".
+objective: Detect rundll32.exe loading code from user-writable folders or executing inline script, without alerting on built-in components or software installed under Program Files and AppData\Local.
+hints:
+  - Look at what rundll32 is asked to load. Built-in uses name system DLLs (shell32.dll, printui.dll, user32.dll). Which locations should never hold a DLL that rundll32 loads?
+  - "Inline script is a separate technique: the argument starts with javascript: or vbscript: (or mentions RunHTMLApplication)."
+  - "Use \\Temp\\, \\Users\\Public\\ and \\AppData\\Roaming\\. Do not use plain \\AppData\\: OneDrive loads DLLs from AppData\\Local with rundll32 legitimately."
+thresholds:
+  min_tpr: 1
+  max_fpr: 0
+  min_variants_caught: all
+estimated_minutes: 20
+author: detection-dojo contributors

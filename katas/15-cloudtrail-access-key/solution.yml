@@ -1,0 +1,25 @@
+title: Access key created for a different IAM user
+id: dafee242-28da-44d4-b61b-c621f8192a51
+status: stable
+description: Detects CreateAccessKey calls where the target user differs from the caller, excluding the approved rotation role.
+author: detection-dojo contributors
+date: 2026/10/15
+tags:
+  - attack.persistence
+  - attack.t1098.001
+logsource:
+  product: aws
+  service: cloudtrail
+detection:
+  selection:
+    eventSource: 'iam.amazonaws.com'
+    eventName: 'CreateAccessKey'
+    requestParameters.userName|exists: true
+  filter_self:
+    requestParameters.userName|fieldref: 'userIdentity.userName'
+  filter_rotation_role:
+    userIdentity.arn|startswith: 'arn:aws:sts::123456789012:assumed-role/KeyRotationBot/'
+  condition: selection and not 1 of filter_*
+falsepositives:
+  - Administrators or provisioning tools creating keys on behalf of users; allow-list their role ARNs
+level: high

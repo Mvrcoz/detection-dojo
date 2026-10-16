@@ -1,0 +1,33 @@
+number: 12
+id: masquerading-system-binaries
+title: The right name in the wrong place
+tier: 3
+kind: write
+attack:
+  - T1036.005
+tags:
+  - defense-evasion
+  - masquerading
+  - windows
+logsource:
+  category: process_creation
+  product: windows
+scenario: |
+  Attackers name their tools after core Windows processes because defenders skim past them in a process
+  list. The giveaway is almost always **location**: the real `svchost.exe`, `lsass.exe` and friends run
+  from exactly one folder.
+
+  That sounds easy until you write the exclusion. "Allow anything under System32" lets an attacker
+  hide in a subfolder, and one shared allow-list lets a tool pretend to be a process that lives
+  somewhere else. The precise rule pairs each name with its **one correct path**.
+objective: Detect core Windows processes running from anywhere other than their one correct location, without alerting on the genuine binaries or on third-party programs whose names merely contain a system name.
+hints:
+  - Build it as "name matches, and full path does not match the legitimate path". A filter compares the full Image path, not just its ending.
+  - Most of these live in C:\Windows\System32\, but explorer.exe lives in C:\Windows\. Treat it separately, or a copy of explorer.exe placed in System32 will slip through.
+  - Do not exclude "anything under System32" with startswith. Use an anchored regex or exact equality; one event hides in System32\drivers\etc.
+thresholds:
+  min_tpr: 1
+  max_fpr: 0
+  min_variants_caught: all
+estimated_minutes: 30
+author: detection-dojo contributors

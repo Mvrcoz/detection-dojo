@@ -1,0 +1,53 @@
+title: Reverse shell command line
+id: 427d8d0a-81eb-4759-9c3e-cd58dc36be4e
+status: stable
+description: Detects common reverse-shell constructions using bash, netcat, Python and socat.
+author: detection-dojo contributors
+date: 2026/10/15
+tags:
+  - attack.execution
+  - attack.t1059.004
+logsource:
+  category: process_creation
+  product: linux
+detection:
+  bash_dev:
+    CommandLine|contains:
+      - '/dev/tcp/'
+      - '/dev/udp/'
+  bash_redirect:
+    CommandLine|contains:
+      - '>&'
+      - '<&'
+      - ' -i'
+  nc_img:
+    Image|endswith:
+      - '/nc'
+      - '/ncat'
+      - '/nc.traditional'
+      - '/netcat'
+  nc_exec:
+    CommandLine|contains:
+      - ' -e '
+      - ' -c '
+      - '--exec'
+      - '--sh-exec'
+  py_img:
+    Image|contains: 'python'
+  py_connect:
+    CommandLine|contains|all:
+      - 'socket'
+      - 'connect'
+  py_shell:
+    CommandLine|contains:
+      - 'dup2'
+      - 'pty.spawn'
+      - 'subprocess'
+  socat_img:
+    Image|endswith: '/socat'
+  socat_exec:
+    CommandLine|contains: 'exec:'
+  condition: (bash_dev and bash_redirect) or (nc_img and nc_exec) or (py_img and py_connect and py_shell) or (socat_img and socat_exec)
+falsepositives:
+  - Administrators testing connectivity with unusual one-liners
+level: high

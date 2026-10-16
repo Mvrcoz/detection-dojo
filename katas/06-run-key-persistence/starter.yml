@@ -1,0 +1,14 @@
+title: Describe the behavior you detect
+id: 98e95e43-d756-4486-a3d1-a21ba8cdea9d
+status: experimental
+description: One sentence about what this rule finds.
+logsource:
+  category: registry_set
+  product: windows
+detection:
+  selection:
+    TargetObject|contains: '\your-key\'
+  condition: selection
+falsepositives:
+  - What harmless activity could look like this?
+level: medium

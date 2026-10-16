@@ -1,0 +1,14 @@
+title: Describe the behavior you detect
+id: 06636c6b-7175-4a7b-8962-17b8fb505dc0
+status: experimental
+description: One sentence about what this rule finds.
+logsource:
+  product: aws
+  service: cloudtrail
+detection:
+  selection:
+    eventName: 'YourEventName'
+  condition: selection
+falsepositives:
+  - What harmless activity could look like this?
+level: medium

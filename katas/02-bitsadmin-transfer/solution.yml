@@ -1,0 +1,26 @@
+title: BITS job used to download or trigger execution
+id: 59600cf8-5cfa-4e61-8c45-7fe816d6e893
+status: stable
+description: Detects bitsadmin.exe transferring a file or registering a command to run on job completion.
+author: detection-dojo contributors
+date: 2026/10/15
+tags:
+  - attack.defense-evasion
+  - attack.persistence
+  - attack.t1197
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_img:
+    - Image|endswith: '\bitsadmin.exe'
+    - OriginalFileName: 'bitsadmin.exe'
+  selection_cli:
+    CommandLine|contains:
+      - '/transfer'
+      - '/addfile'
+      - '/setnotifycmdline'
+  condition: all of selection_*
+falsepositives:
+  - Software deployment scripts that still use bitsadmin to download installers
+level: medium

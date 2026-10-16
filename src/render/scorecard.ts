@@ -37,11 +37,44 @@ export function summarizeEvent(event: Record<string, unknown>, max = 88): string
     const shown = imageName !== '' && !commandLine.toLowerCase().includes(imageName.toLowerCase());
     return truncate(shown ? `${commandLine}  [image: ${imageName}]` : commandLine, max);
   }
+  const special = summarizeKnownShape(event);
+  if (special !== undefined) return truncate(special, max);
   const keys = Object.keys(event);
   const chosen = PREFERRED_FIELDS.filter((key) => key in event);
   const picked = (chosen.length > 0 ? chosen : keys).slice(0, 3);
   const parts = picked.map((key) => `${key}=${formatValue(event[key])}`);
   return truncate(parts.join('  '), max);
+}
+
+const lastSegment = (path: string): string => path.split(/[\\/]/).filter(Boolean).pop() ?? path;
+
+/** Readable one-liners for the other event shapes the curriculum uses (registry, process access, services, cloud API calls). */
+function summarizeKnownShape(event: Record<string, unknown>): string | undefined {
+  const str = (key: string): string | undefined => (typeof event[key] === 'string' ? (event[key] as string) : undefined);
+  const target = str('TargetObject');
+  const details = str('Details');
+  if (target !== undefined && details !== undefined) return `registry ${lastSegment(target)} = ${details}`;
+  const source = str('SourceImage');
+  const targetImage = str('TargetImage');
+  if (source !== undefined && targetImage !== undefined) {
+    const access = str('GrantedAccess');
+    return `${source} opened ${lastSegment(targetImage)}${access === undefined ? '' : ` (access ${access})`}`;
+  }
+  const imagePath = str('ImagePath');
+  if (imagePath !== undefined) return `service ${str('ServiceName') ?? '?'}: ${imagePath}`;
+  const eventName = str('eventName');
+  if (eventName !== undefined) {
+    const identity = event['userIdentity'];
+    const who =
+      identity !== null && typeof identity === 'object'
+        ? ((identity as Record<string, unknown>)['userName'] ?? (identity as Record<string, unknown>)['type'])
+        : undefined;
+    const params = event['requestParameters'];
+    const subject =
+      params !== null && typeof params === 'object' ? (params as Record<string, unknown>)['userName'] : undefined;
+    return `${eventName} by ${String(who ?? '?')}${subject === undefined ? '' : ` for ${String(subject)}`}`;
+  }
+  return undefined;
 }
 
 function formatValue(value: unknown): string {

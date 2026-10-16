@@ -1,0 +1,31 @@
+title: Service installed with a suspicious command line
+id: 42aa4c83-85df-44c7-aaa3-d8ca6b2ecf63
+status: stable
+description: Detects service installation events whose ImagePath uses an interpreter or a staging location.
+author: detection-dojo contributors
+date: 2026/10/15
+tags:
+  - attack.persistence
+  - attack.privilege-escalation
+  - attack.t1543.003
+logsource:
+  product: windows
+  service: system
+detection:
+  selection_event:
+    EventID: 7045
+    Provider_Name: 'Service Control Manager'
+  selection_path:
+    ImagePath|contains:
+      - '%COMSPEC%'
+      - 'cmd.exe /c'
+      - 'cmd /c'
+      - 'powershell'
+      - '\ADMIN$\'
+      - '\Users\Public\'
+      - '\Windows\Temp\'
+      - '\AppData\'
+  condition: all of selection_*
+falsepositives:
+  - Management tools that install a temporary service from a staging folder
+level: high

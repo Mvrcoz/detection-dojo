@@ -1,0 +1,28 @@
+title: Mshta executing remote or inline script
+id: 8aa2d521-7986-4b3c-9394-5e165d4ce551
+status: stable
+description: Detects mshta.exe given a URL, a UNC path or an inline script instead of a local file.
+author: detection-dojo contributors
+date: 2026/10/15
+tags:
+  - attack.defense-evasion
+  - attack.execution
+  - attack.t1218.005
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_img:
+    - Image|endswith: '\mshta.exe'
+    - OriginalFileName: 'MSHTA.EXE'
+  selection_cli:
+    CommandLine|contains:
+      - 'http://'
+      - 'https://'
+      - 'vbscript:'
+      - 'javascript:'
+      - '\\\\'
+  condition: all of selection_*
+falsepositives:
+  - Legacy installers that load an HTA from a network share
+level: high

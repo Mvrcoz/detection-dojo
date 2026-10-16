@@ -1,0 +1,15 @@
+title: Suspicious PowerShell parameter
+id: 3b9f6a0e-6a1e-4a52-9d36-0a7f1f4b2c11
+status: experimental
+description: Fires on PowerShell switches that begin with -e. Catches encoded commands but is far too noisy.
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    Image|endswith: '\powershell.exe'
+    CommandLine|contains: ' -e'
+  condition: selection
+falsepositives:
+  - Plenty
+level: medium

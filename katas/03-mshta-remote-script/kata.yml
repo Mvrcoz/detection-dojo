@@ -1,0 +1,33 @@
+number: 3
+id: mshta-remote-script
+title: A built-in HTML app host runs remote script
+tier: 1
+kind: write
+attack:
+  - T1218.005
+tags:
+  - execution
+  - defense-evasion
+  - windows
+  - lolbin
+logsource:
+  category: process_creation
+  product: windows
+scenario: |
+  `mshta.exe` is the Microsoft HTML Application host: it runs `.hta` files, which are web pages with
+  full access to the local machine. Very few modern programs need it, but a few old installers still do.
+
+  A phishing page told a user to "run this to fix your browser". Your job is to catch `mshta.exe`
+  executing something that does not come from a trusted local application: a remote URL or script
+  passed directly on the command line.
+objective: Detect mshta.exe launched with a remote location or an inline script, without alerting on mshta opening local application files.
+hints:
+  - Look at what follows mshta.exe. A local installer passes a path on disk; an attack passes something that is not a local file.
+  - "Remote content shows up as http:// or https:// (or a UNC share). Inline script shows up as a vbscript: or javascript: prefix."
+  - Match the image or OriginalFileName mshta.exe and any of those markers in CommandLine. Remember a UNC path starts with two backslashes.
+thresholds:
+  min_tpr: 1
+  max_fpr: 0
+  min_variants_caught: 0
+estimated_minutes: 12
+author: detection-dojo contributors

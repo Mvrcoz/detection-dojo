@@ -1,0 +1,14 @@
+title: Describe the behavior you detect
+id: b607dd73-b5eb-458e-84fa-11b61482d4a5
+status: experimental
+description: One sentence about what this rule finds.
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    ParentImage|endswith: '\your-parent.exe'
+  condition: selection
+falsepositives:
+  - What harmless activity could look like this?
+level: medium

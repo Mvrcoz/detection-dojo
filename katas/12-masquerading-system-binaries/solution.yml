@@ -1,0 +1,25 @@
+title: Core Windows process running from an unexpected path
+id: 974bbd21-9db6-44d1-9a6b-7f7ecd07d3d1
+status: stable
+description: Detects svchost, lsass, csrss and similar processes (and explorer.exe) running from anywhere but their one legitimate path.
+author: detection-dojo contributors
+date: 2026/10/15
+tags:
+  - attack.defense-evasion
+  - attack.t1036.005
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_core:
+    Image|re|i: '\\(svchost|lsass|csrss|services|winlogon|smss|wininit|spoolsv)\.exe$'
+  filter_core_path:
+    Image|re|i: '^C:\\Windows\\System32\\(svchost|lsass|csrss|services|winlogon|smss|wininit|spoolsv)\.exe$'
+  selection_explorer:
+    Image|endswith: '\explorer.exe'
+  filter_explorer_path:
+    Image: 'C:\Windows\explorer.exe'
+  condition: (selection_core and not filter_core_path) or (selection_explorer and not filter_explorer_path)
+falsepositives:
+  - 'Windows installed on a drive other than C: (extend the paths if that is normal in your estate)'
+level: high

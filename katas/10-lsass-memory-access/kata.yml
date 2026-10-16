@@ -1,0 +1,33 @@
+number: 10
+id: lsass-memory-access
+title: Who is reading the memory of the login process?
+tier: 2
+kind: write
+attack:
+  - T1003.001
+tags:
+  - credential-access
+  - windows
+  - process-access
+logsource:
+  category: process_access
+  product: windows
+scenario: |
+  `lsass.exe` holds credential material for logged-in users, so credential dumpers read its memory.
+  Sysmon event 10 ("process accessed") records which process opened which other process and with what
+  **access rights**, written as a hexadecimal mask.
+
+  Plenty of legitimate software opens lsass too: the system itself, Defender, endpoint agents. The
+  difficulty is writing an exclusion list that attackers cannot walk through by simply naming their
+  program `svchost.exe`.
+objective: Detect untrusted processes opening lsass.exe with memory-reading access rights, allowing only specific system and security-product processes identified by their full path.
+hints:
+  - Select events whose TargetImage ends with \lsass.exe, then narrow by GrantedAccess to the masks that allow reading memory (0x1010, 0x1038, 0x1438, 0x143a, 0x1fffff).
+  - "Exclude trusted callers in a filter. Be careful how: one event has SourceImage named svchost.exe in a folder that is not System32."
+  - Compare the whole path, never just the file name. Use SourceImage equality for system binaries, and startswith on the product folder for Defender and the EDR agent.
+thresholds:
+  min_tpr: 1
+  max_fpr: 0
+  min_variants_caught: all
+estimated_minutes: 25
+author: detection-dojo contributors

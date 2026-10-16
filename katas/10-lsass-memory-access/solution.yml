@@ -1,0 +1,34 @@
+title: Suspicious process reading LSASS memory
+id: 5f366887-5512-44c0-8b0b-65d4cb643a6e
+status: stable
+description: Detects processes other than approved system and security software opening lsass.exe with memory-read rights.
+author: detection-dojo contributors
+date: 2026/10/15
+tags:
+  - attack.credential-access
+  - attack.t1003.001
+logsource:
+  category: process_access
+  product: windows
+detection:
+  selection:
+    TargetImage|endswith: '\lsass.exe'
+    GrantedAccess:
+      - '0x1010'
+      - '0x1038'
+      - '0x1438'
+      - '0x143a'
+      - '0x1fffff'
+  filter_system:
+    SourceImage:
+      - 'C:\Windows\System32\svchost.exe'
+      - 'C:\Windows\System32\wininit.exe'
+      - 'C:\Windows\System32\csrss.exe'
+  filter_defender:
+    SourceImage|startswith: 'C:\ProgramData\Microsoft\Windows Defender\'
+  filter_edr:
+    SourceImage|startswith: 'C:\Program Files\EDRVendor\'
+  condition: selection and not 1 of filter_*
+falsepositives:
+  - Other security products or backup agents that read LSASS; add their full install paths as filters
+level: high

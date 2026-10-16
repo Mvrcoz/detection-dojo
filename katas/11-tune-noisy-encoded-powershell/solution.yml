@@ -1,0 +1,32 @@
+title: Encoded PowerShell command outside approved management agents
+id: db5351ab-f816-4eee-96d7-8e45afa5189d
+status: stable
+description: Detects PowerShell started with an encoded command (any accepted switch spelling), excluding SCCM and Intune.
+author: detection-dojo contributors
+date: 2026/10/15
+tags:
+  - attack.execution
+  - attack.defense-evasion
+  - attack.t1059.001
+  - attack.t1027
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_img:
+    - Image|endswith:
+        - '\powershell.exe'
+        - '\pwsh.exe'
+    - OriginalFileName:
+        - 'PowerShell.EXE'
+        - 'pwsh.dll'
+  selection_encoded:
+    CommandLine|re|i: '\s[-/\u2013\u2014\u2015]e(?:c|n[a-z]*)?\s+[A-Za-z0-9+/]{16,}={0,2}'
+  filter_management:
+    ParentImage|startswith:
+      - 'C:\Windows\CCM\'
+      - 'C:\Program Files (x86)\Microsoft Intune Management Extension\'
+  condition: selection_img and selection_encoded and not filter_management
+falsepositives:
+  - Other automation that passes encoded commands; add its full parent path as a filter
+level: high

@@ -1,0 +1,34 @@
+number: 6
+id: run-key-persistence
+title: A program that starts every time you log in
+tier: 2
+kind: write
+attack:
+  - T1547.001
+tags:
+  - persistence
+  - windows
+  - registry
+logsource:
+  category: registry_set
+  product: windows
+scenario: |
+  Anything listed under the registry "Run" keys starts automatically when a user logs in. That is
+  exactly why legitimate software uses them (OneDrive, Teams, chat clients) and exactly why malware
+  does too.
+
+  This kata uses registry events (Sysmon event 13, "registry value set"). You see the key that was
+  written, the value that was stored in it, and the process that wrote it. A rule on the key alone fires
+  on every installer; a rule on the value's location alone fires on any program that stores a path.
+  You need both, and you need to be careful about which folders are really suspicious.
+objective: Detect a Run or RunOnce autostart entry whose value points into a user-writable staging folder or launches a scripting host, without alerting on vendor apps that legitimately register themselves.
+hints:
+  - 'Two things must hold: the registry key is an autostart key, and the value that was written looks suspicious. Use two selections and "all of".'
+  - Autostart keys end in \CurrentVersion\Run\ or \CurrentVersion\RunOnce\. There is a less famous one under Policies\Explorer\Run\ too.
+  - "Do not match \\AppData\\ generally: OneDrive, Teams and Discord live in AppData\\Local. Compare which folders attackers use (Roaming, Temp, Users\\Public) and which interpreters show up in the value."
+thresholds:
+  min_tpr: 1
+  max_fpr: 0
+  min_variants_caught: all
+estimated_minutes: 20
+author: detection-dojo contributors

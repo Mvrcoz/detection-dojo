@@ -1,0 +1,34 @@
+number: 7
+id: office-spawns-shell
+title: A document that runs commands
+tier: 2
+kind: write
+attack:
+  - T1204.002
+  - T1059
+tags:
+  - initial-access
+  - execution
+  - phishing
+  - windows
+logsource:
+  category: process_creation
+  product: windows
+scenario: |
+  A user opened an invoice from an email and, a moment later, a command prompt window flickered. Word,
+  Excel and Outlook have no business starting a command interpreter on their own, which makes the
+  **parent-child relationship** one of the best signals in process creation logs.
+
+  Parent-child rules have a classic problem: some company add-ins really do shell out. Part of the job
+  here is writing the exception narrowly enough that it cannot be abused.
+objective: Detect an Office application starting a command or script interpreter, except for the one known document-sync add-in, while ignoring Office helper processes and non-Office parents.
+hints:
+  - "Think in two selections: the parent (which applications?) and the child (which interpreters?). Both must be true."
+  - "Children to cover: cmd, powershell, pwsh, wscript, cscript, mshta, regsvr32. Check Image and OriginalFileName so a renamed copy still counts."
+  - The DocMgr sync add-in is allowed. Write a filter that matches its specific script path in CommandLine, and use "selection and not filter" (not a broad exclusion of cmd.exe).
+thresholds:
+  min_tpr: 1
+  max_fpr: 0
+  min_variants_caught: all
+estimated_minutes: 20
+author: detection-dojo contributors

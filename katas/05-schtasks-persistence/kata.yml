@@ -1,0 +1,33 @@
+number: 5
+id: schtasks-persistence
+title: A scheduled task that runs from the wrong place
+tier: 1
+kind: write
+attack:
+  - T1053.005
+tags:
+  - persistence
+  - execution
+  - windows
+logsource:
+  category: process_creation
+  product: windows
+scenario: |
+  Scheduled tasks are how Windows (and a lot of software) runs things on a timer or at logon, which also
+  makes them a favorite way to survive a reboot. Creating a task is completely normal: installers do it
+  constantly.
+
+  The suspicious part is usually *what the task runs*. A task pointing into a user's AppData\Roaming
+  folder, a temp directory, the public profile, or straight at an interpreter with a long command, is
+  very different from one pointing at an installed program.
+objective: Detect schtasks.exe creating a task whose action lives in a user-writable location or launches a scripting interpreter, while ignoring task creation for installed software and every non-creation sub-command.
+hints:
+  - schtasks has /query, /run, /delete, /change and /create. Only one of them makes a new task.
+  - "Creating a task is not suspicious on its own. Add a second condition about where the action points: \\AppData\\Roaming\\, \\Temp\\, \\Users\\Public\\."
+  - 'Interpreters launched directly from a task are also telling: powershell, wscript, mshta, "cmd /c". Combine "/create" with any of these in one selection each, then use "all of".'
+thresholds:
+  min_tpr: 1
+  max_fpr: 0
+  min_variants_caught: 0
+estimated_minutes: 15
+author: detection-dojo contributors

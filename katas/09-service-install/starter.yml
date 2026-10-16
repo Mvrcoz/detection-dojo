@@ -1,0 +1,14 @@
+title: Describe the behavior you detect
+id: 5a0a0ccd-2852-43f6-8bbe-d20226ee0f31
+status: experimental
+description: One sentence about what this rule finds.
+logsource:
+  product: windows
+  service: system
+detection:
+  selection:
+    EventID: '1'
+  condition: selection
+falsepositives:
+  - What harmless activity could look like this?
+level: medium

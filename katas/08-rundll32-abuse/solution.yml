@@ -1,0 +1,28 @@
+title: Rundll32 loading from a staging folder or running inline script
+id: 3652e837-a580-4e47-ae1e-579dfa339f22
+status: stable
+description: Detects rundll32.exe executing DLLs from user-writable folders or inline script.
+author: detection-dojo contributors
+date: 2026/10/15
+tags:
+  - attack.defense-evasion
+  - attack.t1218.011
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_img:
+    - Image|endswith: '\rundll32.exe'
+    - OriginalFileName: 'RUNDLL32.EXE'
+  selection_cli:
+    CommandLine|contains:
+      - 'javascript:'
+      - 'vbscript:'
+      - 'RunHTMLApplication'
+      - '\AppData\Roaming\'
+      - '\Temp\'
+      - '\Users\Public\'
+  condition: all of selection_*
+falsepositives:
+  - Software that unpacks helper DLLs to a temp folder and calls them with rundll32
+level: high

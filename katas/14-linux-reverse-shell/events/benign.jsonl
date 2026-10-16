@@ -1,0 +1,8 @@
+{"EventID":1,"Image":"/usr/bin/bash","CommandLine":"bash -i","ParentImage":"/usr/bin/sshd","User":"alice","_dojo":{"note":"A normal interactive shell; no /dev/tcp."}}
+{"EventID":1,"Image":"/usr/bin/bash","CommandLine":"bash -c 'echo > /dev/tcp/127.0.0.1/5432 && echo up'","ParentImage":"/usr/bin/cron","User":"root","_dojo":{"note":"Health check against localhost: /dev/tcp without a shell redirect."}}
+{"EventID":1,"Image":"/usr/bin/timeout","CommandLine":"timeout 2 bash -c '</dev/tcp/db.example.com/5432' && echo reachable","ParentImage":"/usr/bin/cron","User":"root","_dojo":{"note":"Reachability probe that only reads."}}
+{"EventID":1,"Image":"/usr/bin/nc.openbsd","CommandLine":"nc -zv db.example.com 5432","ParentImage":"/usr/bin/bash","User":"alice","_dojo":{"note":"Port scan check: -z."}}
+{"EventID":1,"Image":"/usr/bin/nc.openbsd","CommandLine":"nc -l 8080","ParentImage":"/usr/bin/bash","User":"alice","_dojo":{"note":"A listener; no program is executed."}}
+{"EventID":1,"Image":"/usr/bin/python3","CommandLine":"python3 -c 'import socket; print(socket.gethostname())'","ParentImage":"/usr/bin/bash","User":"alice","_dojo":{"note":"Uses socket but never connects or attaches a shell."}}
+{"EventID":1,"Image":"/usr/bin/python3","CommandLine":"python3 -m http.server 8000","ParentImage":"/usr/bin/bash","User":"alice","_dojo":{"note":"A local file server."}}
+{"EventID":1,"Image":"/usr/bin/curl","CommandLine":"curl -s http://localhost:8080/health","ParentImage":"/usr/bin/cron","User":"root","_dojo":{"note":"Health check over HTTP."}}

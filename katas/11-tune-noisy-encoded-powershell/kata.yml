@@ -1,0 +1,34 @@
+number: 11
+id: tune-noisy-encoded-powershell
+title: The rule everyone muted
+tier: 3
+kind: tune
+attack:
+  - T1059.001
+  - T1027
+tags:
+  - execution
+  - defense-evasion
+  - tuning
+  - windows
+logsource:
+  category: process_creation
+  product: windows
+scenario: |
+  The SOC has a rule for suspicious PowerShell switches. It catches every encoded command attackers run,
+  and it also fires hundreds of times a day, so analysts muted it. A muted rule detects nothing.
+
+  Your job is not to write a rule from scratch. The starter already catches every attack; make it quiet
+  without losing a single one. Real environments have a twist: the device-management agents (SCCM and
+  Intune) legitimately run encoded PowerShell all day.
+objective: Tune the starter rule so it still catches every encoded PowerShell command, including shortened switches and other dash characters, but ignores unrelated -E parameters and the approved management agents.
+hints:
+  - Run the starter and read the false alarms. What do -ExecutionPolicy, -ErrorAction, -Encoding and -Exclude have in common with the attacks? Only the first two characters of the switch.
+  - PowerShell accepts any unambiguous prefix of -EncodedCommand (-e, -ec, -enc ...) and the argument that follows is a long Base64 string. A regex can require both the switch and a long Base64-looking argument.
+  - SCCM (C:\Windows\CCM\) and Intune start encoded commands legitimately. Exclude them by the full parent path with a filter, and remember pwsh.exe, renamed copies and typographic dashes (en dash, em dash) are real attacker moves.
+thresholds:
+  min_tpr: 1
+  max_fpr: 0
+  min_variants_caught: all
+estimated_minutes: 30
+author: detection-dojo contributors

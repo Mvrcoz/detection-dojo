@@ -153,7 +153,16 @@ function validateRule(value: unknown): SigmaRule {
   for (const key of STRING_LIST_KEYS) {
     const entry = value[key];
     if (!Object.hasOwn(value, key) || entry === undefined || entry === null) continue;
-    if (!Array.isArray(entry) || entry.some((item) => typeof item !== 'string')) {
+    if (Array.isArray(entry)) {
+      const badIndex = entry.findIndex((item) => typeof item !== 'string');
+      if (badIndex !== -1) {
+        throw new RuleParseError(
+          `Item ${badIndex + 1} of '${key}' is ${describeValue(entry[badIndex])}, but every item must be text. ` +
+            'A colon followed by a space inside an item makes YAML read it as a nested map; wrap the whole item in quotes.',
+          key,
+        );
+      }
+    } else {
       throw new RuleParseError(
         `'${key}' must be a list of text items (\`${key}:\` followed by \`- item\` lines), but it is ${describeValue(entry)}.`,
         key,

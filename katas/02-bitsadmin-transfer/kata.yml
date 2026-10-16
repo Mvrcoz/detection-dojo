@@ -1,0 +1,33 @@
+number: 2
+id: bitsadmin-transfer
+title: A built-in tool quietly downloads a file
+tier: 1
+kind: write
+attack:
+  - T1197
+tags:
+  - command-and-control
+  - defense-evasion
+  - windows
+  - lolbin
+logsource:
+  category: process_creation
+  product: windows
+scenario: |
+  Windows ships with a Background Intelligent Transfer Service (BITS), the engine behind Windows
+  Update, and a command-line client for it: `bitsadmin.exe`. Because BITS traffic looks like system
+  traffic, attackers use it to pull tools down from the internet.
+
+  Your proxy logged a download that came from `svchost.exe`, which tells you nothing. The process
+  creation log shows who asked for it.
+objective: Detect bitsadmin.exe being used to fetch a file or to run a command when a transfer finishes, without alerting on job inspection and housekeeping commands.
+hints:
+  - bitsadmin has dozens of sub-commands. Most only inspect or manage jobs (/list, /monitor, /info, /cancel). Which ones move data or run something?
+  - /transfer downloads in one step. /addfile attaches a URL to an existing job. /setnotifycmdline runs a program when the job completes.
+  - Match the image (or OriginalFileName) bitsadmin.exe and any of those three switches in CommandLine.
+thresholds:
+  min_tpr: 1
+  max_fpr: 0
+  min_variants_caught: 0
+estimated_minutes: 12
+author: detection-dojo contributors

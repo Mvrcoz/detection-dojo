@@ -1,0 +1,32 @@
+title: Scheduled task created to run from a user-writable path or interpreter
+id: 9b161c05-0ccc-49bd-8ffb-e9bfcbe881fd
+status: stable
+description: Detects schtasks.exe creating a task whose action points at a user-writable folder or a scripting host.
+author: detection-dojo contributors
+date: 2026/10/15
+tags:
+  - attack.persistence
+  - attack.execution
+  - attack.t1053.005
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_img:
+    - Image|endswith: '\schtasks.exe'
+    - OriginalFileName: 'schtasks.exe'
+  selection_create:
+    CommandLine|contains: '/create'
+  selection_where:
+    CommandLine|contains:
+      - '\AppData\Roaming\'
+      - '\Temp\'
+      - '\Users\Public\'
+      - 'powershell'
+      - 'wscript'
+      - 'mshta'
+      - 'cmd /c'
+  condition: all of selection_*
+falsepositives:
+  - Per-user installers that register an updater task under AppData\Roaming
+level: medium

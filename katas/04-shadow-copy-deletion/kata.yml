@@ -1,0 +1,32 @@
+number: 4
+id: shadow-copy-deletion
+title: Someone is removing your safety net
+tier: 1
+kind: write
+attack:
+  - T1490
+tags:
+  - impact
+  - ransomware
+  - windows
+logsource:
+  category: process_creation
+  product: windows
+scenario: |
+  Before encrypting files, ransomware operators destroy the local ways to get them back: volume shadow
+  copies, boot recovery settings and backup catalogs. Several different built-in tools can do it, so
+  there is no single command to look for.
+
+  Backup software and administrators use the same tools to *manage* shadow copies, so a rule that
+  flags the tool names alone would fire on every nightly backup.
+objective: Detect destruction of shadow copies, boot recovery settings or the backup catalog, while staying quiet on listing, creating and routine cleanup of old copies.
+hints:
+  - "There are four tools to cover: vssadmin, wmic, bcdedit and wbadmin. For each, what does the destructive command look like compared with the listing command?"
+  - 'vssadmin: "delete shadows" together with "/all" (routine cleanup uses /oldest or /for). wmic: "shadowcopy" with "delete". wbadmin: "delete catalog".'
+  - 'bcdedit: "recoveryenabled no" turns recovery off; "recoveryenabled yes" turns it back on. Write one selection per tool and use "1 of selection_*".'
+thresholds:
+  min_tpr: 1
+  max_fpr: 0
+  min_variants_caught: 0
+estimated_minutes: 15
+author: detection-dojo contributors

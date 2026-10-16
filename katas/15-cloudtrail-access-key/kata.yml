@@ -1,0 +1,35 @@
+number: 15
+id: cloudtrail-access-key
+title: Minting keys for someone else
+tier: 3
+kind: write
+attack:
+  - T1098.001
+tags:
+  - persistence
+  - cloud
+  - aws
+  - iam
+logsource:
+  product: aws
+  service: cloudtrail
+scenario: |
+  In AWS, an access key is a long-lived password for the API. An attacker who controls one account can
+  quietly create a **new key for a different, more privileged user** and keep access even after the first
+  account's password is reset.
+
+  CloudTrail records every call as nested JSON. The telling detail is a comparison between two fields:
+  *who made the call* (`userIdentity`) and *who the key is for* (`requestParameters.userName`). Routine key
+  rotation has them equal. This is also your first kata with nested fields and a rule that compares one
+  field against another.
+objective: Detect CreateAccessKey calls that name a user other than the caller, ignoring people rotating their own keys, calls that name no user, and the approved key-rotation role.
+hints:
+  - "Dots in a field name walk into nested JSON: requestParameters.userName, userIdentity.userName, userIdentity.arn."
+  - "Compare two fields with the fieldref modifier: requestParameters.userName|fieldref: userIdentity.userName is true when they are equal. Use it in a filter and negate it."
+  - 'Require requestParameters.userName|exists: true first (self-service calls often omit it). Roles have no userIdentity.userName at all, so they always count as "someone else". Exclude KeyRotationBot by the start of its ARN.'
+thresholds:
+  min_tpr: 1
+  max_fpr: 0
+  min_variants_caught: all
+estimated_minutes: 35
+author: detection-dojo contributors

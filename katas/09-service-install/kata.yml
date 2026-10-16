@@ -1,0 +1,33 @@
+number: 9
+id: service-install
+title: A new service with a strange command line
+tier: 2
+kind: write
+attack:
+  - T1543.003
+  - T1569.002
+tags:
+  - persistence
+  - execution
+  - lateral-movement
+  - windows
+logsource:
+  product: windows
+  service: system
+scenario: |
+  Windows writes event 7045 to the System log every time a service is installed. Services run as
+  SYSTEM and survive reboots, so they are a favorite for both persistence and remote execution tools.
+
+  This is a different log source: there is no process creation event here. Your fields are the service
+  name, its type and, most importantly, the **ImagePath**, the command Windows will run.
+objective: Detect installation of a service whose ImagePath runs through a command interpreter or lives in a user-writable or administrative-share location, without alerting on drivers and software installed in standard locations.
+hints:
+  - "Match the event first: EventID 7045 from the Service Control Manager. Then decide what makes an ImagePath suspicious."
+  - Services normally run a binary from Program Files or System32. Interpreters (%COMSPEC%, cmd /c, powershell), temp folders, the public profile and \ADMIN$\ shares are not normal.
+  - "Do not match \\ProgramData\\: Windows Defender runs from there. Do not match on ServiceName; attackers choose random names."
+thresholds:
+  min_tpr: 1
+  max_fpr: 0
+  min_variants_caught: all
+estimated_minutes: 20
+author: detection-dojo contributors

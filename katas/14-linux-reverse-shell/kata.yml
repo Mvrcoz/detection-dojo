@@ -1,0 +1,34 @@
+number: 14
+id: linux-reverse-shell
+title: A shell that calls home
+tier: 3
+kind: write
+attack:
+  - T1059.004
+tags:
+  - execution
+  - command-and-control
+  - linux
+  - reverse-shell
+logsource:
+  category: process_creation
+  product: linux
+scenario: |
+  A web application on a Linux server was exploited, and a few seconds later the host opened an outbound
+  connection nobody asked for. A reverse shell connects *out* from the victim to the attacker, so it
+  slips past inbound firewall rules.
+
+  There is no single signature. Bash, netcat, Python and socat can each build one, and each has benign
+  neighbors: health checks, port probes, local servers. Four short patterns, kept tight, do better than
+  one clever regex.
+objective: Detect reverse-shell command lines built with bash, netcat/ncat, Python or socat, without alerting on local port checks, listeners, scans or ordinary scripts.
+hints:
+  - "Handle each tool as its own selection: bash with /dev/tcp (or /dev/udp), netcat family with an execute switch, Python with socket plus connect plus a way to attach a shell, socat with exec:."
+  - "For bash, /dev/tcp alone is used by health checks. Reverse shells also redirect a shell into the connection: look for >& or <& (or an interactive -i)."
+  - For netcat, "-l" (listen) and "-z" (scan) are benign; "-e", "-c", "--exec" and "--sh-exec" run a program. Join the four groups with or, each group using all of its parts.
+thresholds:
+  min_tpr: 1
+  max_fpr: 0
+  min_variants_caught: all
+estimated_minutes: 35
+author: detection-dojo contributors

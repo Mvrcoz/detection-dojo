@@ -1,0 +1,32 @@
+title: Autostart registry entry pointing at a staging folder or script host
+id: 3ea86a0b-193e-4694-9df8-71f83495f9b8
+status: stable
+description: Detects Run/RunOnce values that launch from user-writable folders or through scripting hosts.
+author: detection-dojo contributors
+date: 2026/10/15
+tags:
+  - attack.persistence
+  - attack.t1547.001
+logsource:
+  category: registry_set
+  product: windows
+detection:
+  selection_key:
+    TargetObject|contains:
+      - '\CurrentVersion\Run\'
+      - '\CurrentVersion\RunOnce\'
+      - '\Explorer\Run\'
+  selection_value:
+    Details|contains:
+      - '\AppData\Roaming\'
+      - '\Temp\'
+      - '\Users\Public\'
+      - 'powershell'
+      - 'wscript'
+      - 'mshta'
+      - 'rundll32'
+      - 'cmd /c'
+  condition: all of selection_*
+falsepositives:
+  - Portable applications that register themselves from AppData\Roaming
+level: medium

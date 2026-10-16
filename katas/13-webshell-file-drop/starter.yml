@@ -1,0 +1,14 @@
+title: Describe the behavior you detect
+id: d0aa88be-5de5-44b6-998e-3ccbeb80bcaf
+status: experimental
+description: One sentence about what this rule finds.
+logsource:
+  category: file_event
+  product: windows
+detection:
+  selection:
+    TargetFilename|endswith: '.your-extension'
+  condition: selection
+falsepositives:
+  - What harmless activity could look like this?
+level: medium

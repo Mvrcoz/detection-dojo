@@ -1,0 +1,4 @@
+{"EventID":11,"Image":"C:\\Windows\\System32\\inetsrv\\w3wp.exe","TargetFilename":"C:\\inetpub\\wwwroot\\uploads\\shell.aspx","User":"IIS APPPOOL\\DefaultAppPool","_dojo":{"note":"The worker process wrote an .aspx file into an upload folder."}}
+{"EventID":11,"Image":"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe","TargetFilename":"C:\\inetpub\\wwwroot\\app\\error.ashx","User":"EXAMPLE\\alice","_dojo":{"note":"A user session dropping a generic handler."}}
+{"EventID":11,"Image":"C:\\Windows\\System32\\cmd.exe","TargetFilename":"C:\\inetpub\\wwwroot\\favicon.php","User":"EXAMPLE\\alice","_dojo":{"note":"A PHP script created from a command prompt."}}
+{"EventID":11,"Image":"C:\\Windows\\System32\\inetsrv\\w3wp.exe","TargetFilename":"C:\\inetpub\\wwwroot\\images\\logo.asp","User":"IIS APPPOOL\\DefaultAppPool","_dojo":{"note":"Classic ASP file in an images folder."}}

@@ -1,0 +1,46 @@
+title: Office application spawning a shell or script host
+id: 9a3a676a-206c-45a8-bdb3-8a4a45a3fb7d
+status: stable
+description: Detects Office programs starting command or script interpreters, with one documented exception.
+author: detection-dojo contributors
+date: 2026/10/15
+tags:
+  - attack.execution
+  - attack.t1204.002
+  - attack.t1059
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_parent:
+    ParentImage|endswith:
+      - '\winword.exe'
+      - '\excel.exe'
+      - '\powerpnt.exe'
+      - '\outlook.exe'
+      - '\onenote.exe'
+      - '\msaccess.exe'
+      - '\mspub.exe'
+  selection_child:
+    - Image|endswith:
+        - '\cmd.exe'
+        - '\powershell.exe'
+        - '\pwsh.exe'
+        - '\wscript.exe'
+        - '\cscript.exe'
+        - '\mshta.exe'
+        - '\regsvr32.exe'
+    - OriginalFileName:
+        - 'Cmd.Exe'
+        - 'PowerShell.EXE'
+        - 'pwsh.dll'
+        - 'wscript.exe'
+        - 'cscript.exe'
+        - 'MSHTA.EXE'
+        - 'REGSVR32.EXE'
+  filter_docmgr:
+    CommandLine|contains: '\DocMgr\sync.cmd'
+  condition: selection_parent and selection_child and not filter_docmgr
+falsepositives:
+  - Other line-of-business add-ins that call a shell; add narrow filters like the DocMgr one
+level: high

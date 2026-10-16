@@ -1,0 +1,28 @@
+title: Local user account created with net.exe
+id: e3f74062-49a4-446c-9402-8db8da0accc4
+status: stable
+description: Detects creation of a local account through net.exe or net1.exe.
+author: detection-dojo contributors
+date: 2026/10/15
+tags:
+  - attack.persistence
+  - attack.t1136.001
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_img:
+    - Image|endswith:
+        - '\net.exe'
+        - '\net1.exe'
+    - OriginalFileName:
+        - 'net.exe'
+        - 'net1.exe'
+  selection_cli:
+    CommandLine|contains|all:
+      - ' user '
+      - '/add'
+  condition: all of selection_*
+falsepositives:
+  - Administrators creating local accounts by hand or from a provisioning script
+level: medium

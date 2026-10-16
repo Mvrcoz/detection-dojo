@@ -1,0 +1,34 @@
+number: 13
+id: webshell-file-drop
+title: A web page that nobody deployed
+tier: 3
+kind: write
+attack:
+  - T1505.003
+tags:
+  - persistence
+  - webshell
+  - iis
+  - windows
+logsource:
+  category: file_event
+  product: windows
+scenario: |
+  A web shell is a small server-side script an attacker uploads to a website to run commands through it.
+  On IIS they usually land as `.aspx` or `.ashx` files inside the web root, and they are often written
+  by the web server process itself, through a vulnerable upload form.
+
+  Here the log source is file creation (Sysmon event 11), not process creation: you see the process that
+  wrote a file and the path it wrote. Legitimate deployments also write script files into the web root,
+  but they come from a small set of known tools.
+objective: Detect script files created in the IIS web root by anything other than the approved deployment tool, without alerting on logs, data files, cached compilation output or non-script files.
+hints:
+  - "You need three facts: the file is in the web root, it has a server-side script extension, and the writer is not the approved deployer."
+  - 'Server-side script extensions to cover: .aspx, .ashx, .asmx, .asp, .php, .jsp and .cshtml. Beware that compiled cache DLLs have names that CONTAIN ".aspx" but end differently.'
+  - Exclude the deploy tool by its full Image path with a filter (C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe), not by the name msdeploy.exe.
+thresholds:
+  min_tpr: 1
+  max_fpr: 0
+  min_variants_caught: all
+estimated_minutes: 30
+author: detection-dojo contributors

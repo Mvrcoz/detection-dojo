@@ -1,0 +1,32 @@
+number: 1
+id: net-user-add
+title: A new local account appears
+tier: 1
+kind: write
+attack:
+  - T1136.001
+tags:
+  - persistence
+  - windows
+  - account-creation
+logsource:
+  category: process_creation
+  product: windows
+scenario: |
+  Overnight monitoring noticed a local user on a file server that nobody in IT created. The process
+  creation log still holds the command that made it.
+
+  Windows account management is done with `net.exe` (which hands the real work to its helper
+  `net1.exe`). Administrators also use the same tool all day to *look at* accounts and shares, so the
+  tool name alone tells you very little. The verb on the command line is what matters.
+objective: Detect creation of a local user account with net.exe or net1.exe, without alerting on commands that only list or query accounts, groups or shares.
+hints:
+  - net.exe has many sub-commands (user, localgroup, use, view, accounts). Which one creates something, and how is it spelled on the command line?
+  - Creating an account is the "user" sub-command plus the "/add" switch. Listing or querying users never uses "/add".
+  - net.exe delegates to net1.exe, and the binary may be renamed. Check Image and OriginalFileName, then require both " user " and "/add" in CommandLine.
+thresholds:
+  min_tpr: 1
+  max_fpr: 0
+  min_variants_caught: 0
+estimated_minutes: 10
+author: detection-dojo contributors

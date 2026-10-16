@@ -1,0 +1,14 @@
+title: Describe the behavior you detect
+id: 1de615bf-048a-41d8-a63e-70db38bc84d3
+status: experimental
+description: One sentence about what this rule finds.
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    Image|endswith: '\your-program.exe'
+  condition: selection
+falsepositives:
+  - What harmless activity could look like this?
+level: medium

@@ -1,0 +1,3 @@
+{"EventID":11,"Image":"C:\\Windows\\System32\\inetsrv\\w3wp.exe","TargetFilename":"C:\\INETPUB\\WWWROOT\\SHELL.ASPX","User":"IIS APPPOOL\\DefaultAppPool","_dojo":{"technique":"upper-case path and extension"}}
+{"EventID":11,"Image":"C:\\Windows\\System32\\inetsrv\\w3wp.exe","TargetFilename":"C:\\inetpub\\wwwroot\\services\\x.asmx","User":"IIS APPPOOL\\DefaultAppPool","_dojo":{"technique":"a web-service extension"}}
+{"EventID":11,"Image":"C:\\Windows\\System32\\cmd.exe","TargetFilename":"C:\\inetpub\\wwwroot\\a\\b\\c\\d\\e.php","User":"EXAMPLE\\alice","_dojo":{"technique":"buried several folders deep"}}
