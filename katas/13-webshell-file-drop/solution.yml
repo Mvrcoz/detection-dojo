@@ -1,5 +1,5 @@
 title: Script file written to the IIS web root by an unexpected process
-id: 56685bbd-a5cf-48b3-88fc-7d12eb753cb7
+id: 5ecce5e3-5c3c-4cb2-a90d-495b50a76547
 status: stable
 description: Detects server-side script files created under the IIS web root by anything other than Web Deploy.
 author: detection-dojo contributors

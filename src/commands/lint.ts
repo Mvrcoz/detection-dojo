@@ -21,6 +21,9 @@ export interface Finding {
 
 const SKIPPED_DIRECTORIES = new Set(['node_modules', '.git']);
 
+/** Kata metadata is YAML but not a rule; directory scans (for example `dojo lint katas`) skip it. */
+const SKIPPED_FILES = new Set(['kata.yml']);
+
 function collectRuleFiles(target: string): string[] {
   let stats;
   try {
@@ -34,7 +37,7 @@ function collectRuleFiles(target: string): string[] {
   for (const entry of readdirSync(target, { withFileTypes: true })) {
     if (entry.isDirectory()) {
       if (!SKIPPED_DIRECTORIES.has(entry.name)) found.push(...collectRuleFiles(join(target, entry.name)));
-    } else if (entry.isFile() && ['.yml', '.yaml'].includes(extname(entry.name).toLowerCase())) {
+    } else if (entry.isFile() && !SKIPPED_FILES.has(entry.name) && ['.yml', '.yaml'].includes(extname(entry.name).toLowerCase())) {
       found.push(join(target, entry.name));
     }
   }
@@ -104,7 +107,8 @@ function staticChecks(file: string, rule: SigmaRule, kata: Kata | undefined): Fi
       } else if (item.field === '' && item.modifiers.length === 0 && /^\**$/.test(value)) {
         warn('match-everything', 'A keyword of only wildcards matches every event.', path);
       }
-      if (matchType === 'contains' && !/[*?]/.test(value) && value.length > 0 && value.length < 4) {
+      // Pure punctuation such as the shell redirect '>&' is a specific token, not a word that appears by accident.
+      if (matchType === 'contains' && !/[*?]/.test(value) && value.length > 0 && value.length < 4 && /[p{L}p{N}]/u.test(value)) {
         warn('broad-short-contains', `'${value}' is only ${value.length} character(s) long; as a substring it will match far more than you intend.`, path);
       }
       if (isRegex) {

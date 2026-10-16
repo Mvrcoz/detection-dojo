@@ -1,5 +1,5 @@
 title: Access key created for a different IAM user
-id: dafee242-28da-44d4-b61b-c621f8192a51
+id: fb1aa101-d3ca-4b87-a1b0-b057873b2334
 status: stable
 description: Detects CreateAccessKey calls where the target user differs from the caller, excluding the approved rotation role.
 author: detection-dojo contributors

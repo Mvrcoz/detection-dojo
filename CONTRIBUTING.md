@@ -108,7 +108,7 @@ Read [docs/KATA_FORMAT.md](docs/KATA_FORMAT.md) first. Its second half, "Design 
    dojo new <id> [--tier N] [--kind write|tune] [--dir DIR]
    ```
 
-   This creates a kata folder with every required file filled with valid placeholder content, and refuses to overwrite anything. The folder must end up at `katas/<NN>-<id>/`, where `NN` is the next unused number. Open `kata.yml` and check that `number` agrees with the folder name.
+   This creates `katas/<NN>-<id>/` in a clone of this repository, using the next unused number and writing it into `kata.yml` for you (pass `--dir` to put it somewhere else). Every required file is filled with working example content marked `CHANGE ME`, and nothing existing is ever overwritten. `dojo validate-kata` refuses a kata until every `CHANGE ME` is gone, so a template cannot be merged by accident.
 3. **Fill in `kata.yml`.** Title, ATT&CK ids, tags, logsource, scenario, objective, two to four escalating hints, thresholds, estimated minutes, and your name in `author`.
 4. **Write the events** in `events/`: at least 3 positives and 6 benign look-alikes, plus at least 3 evasion variants for tier 2 and 3. Give every benign event a `_dojo.note` that explains why it is benign, and every variant a `_dojo.technique`. All data must be synthetic and inert.
 5. **Write `solution.yml`**, then `starter.yml` (a skeleton for `write` katas, a flawed rule for `tune` katas), then `explain.md`.
@@ -119,7 +119,7 @@ Read [docs/KATA_FORMAT.md](docs/KATA_FORMAT.md) first. Its second half, "Design 
    ```
 
    Fix every error, and read every warning. If the solution fails, `dojo test <id> --solution --verbose` shows which events it gets wrong.
-7. **Play it as a learner.** Run `dojo show <id>`, start from the starter with `dojo start <id> --out my-rules/try.yml` (create the git-ignored `my-rules/` folder first), write the laziest rule you can think of, and run `dojo test <id> my-rules/try.yml`. If the lazy rule passes, the benign set is too easy. If the feedback does not teach, improve the notes.
+7. **Play it as a learner.** Run `dojo show <id>`, start from the starter with `dojo start <id> --out my-rules/try.yml` (the git-ignored `my-rules/` folder is created for you), write the laziest rule you can think of, and run `dojo test <id> my-rules/try.yml`. If the lazy rule passes, the benign set is too easy. If the feedback does not teach, improve the notes.
 8. **Lint your solution.** `dojo lint katas/<NN>-<id>/solution.yml --kata <id> --strict` should be clean: the reference rule sets the example.
 9. **Run the whole suite.** `npm test` and `npm run validate-katas`.
 10. **Open the pull request** and tick the kata checklist in the template. Send one kata per pull request.

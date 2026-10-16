@@ -34,8 +34,11 @@ export function summarizeEvent(event: Record<string, unknown>, max = 88): string
     // command line does not already show it (a renamed binary is exactly that case).
     const image = event['Image'];
     const imageName = typeof image === 'string' ? (image.split(/[\\/]/).pop() ?? '') : '';
-    const shown = imageName !== '' && !commandLine.toLowerCase().includes(imageName.toLowerCase());
-    return truncate(shown ? `${commandLine}  [image: ${imageName}]` : commandLine, max);
+    const stem = (name: string): string => name.replace(/\.exe$/i, '').toLowerCase();
+    const firstWord = /^\s*(?:"([^"]+)"|(\S+))/.exec(commandLine);
+    const launched = (firstWord?.[1] ?? firstWord?.[2] ?? '').split(/[\\/]/).pop() ?? '';
+    const differs = imageName !== '' && stem(launched) !== stem(imageName);
+    return truncate(differs ? `${commandLine}  [image: ${imageName}]` : commandLine, max);
   }
   const special = summarizeKnownShape(event);
   if (special !== undefined) return truncate(special, max);

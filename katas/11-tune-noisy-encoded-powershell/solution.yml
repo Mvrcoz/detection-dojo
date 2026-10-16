@@ -1,5 +1,5 @@
 title: Encoded PowerShell command outside approved management agents
-id: db5351ab-f816-4eee-96d7-8e45afa5189d
+id: f0305e26-888f-48c6-8d41-82af20219257
 status: stable
 description: Detects PowerShell started with an encoded command (any accepted switch spelling), excluding SCCM and Intune.
 author: detection-dojo contributors

@@ -478,4 +478,4 @@ npm test
 npm run validate-katas
 ```
 
-`dojo new` creates a folder with valid placeholder files for every part of the kata. Before you build on it, confirm that `number` is the next unused number in `katas/` and that the folder is named `<NN>-<id>`. Then play your own kata: write a naive rule and make sure the failure output teaches something. When it does, open a pull request and tick the kata checklist in the template.
+`dojo new` creates a folder with valid placeholder files for every part of the kata. The command picks the next unused number and names the folder `<NN>-<id>` for you. Every file carries `CHANGE ME` markers, and `dojo validate-kata` fails until you have replaced them all. Then play your own kata: write a naive rule and make sure the failure output teaches something. When it does, open a pull request and tick the kata checklist in the template.

@@ -1,5 +1,5 @@
 title: Core Windows process running from an unexpected path
-id: 974bbd21-9db6-44d1-9a6b-7f7ecd07d3d1
+id: 6091262f-01a4-478f-a400-700996568670
 status: stable
 description: Detects svchost, lsass, csrss and similar processes (and explorer.exe) running from anywhere but their one legitimate path.
 author: detection-dojo contributors

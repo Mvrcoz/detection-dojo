@@ -1,5 +1,5 @@
 title: Reverse shell command line
-id: 427d8d0a-81eb-4759-9c3e-cd58dc36be4e
+id: 5463e7c7-a304-46dd-a58b-4f41ca87d5b5
 status: stable
 description: Detects common reverse-shell constructions using bash, netcat, Python and socat.
 author: detection-dojo contributors
@@ -19,7 +19,7 @@ detection:
     CommandLine|contains:
       - '>&'
       - '<&'
-      - ' -i'
+      - ' -i '
   nc_img:
     Image|endswith:
       - '/nc'
