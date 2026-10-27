@@ -1,3 +1,9 @@
+<p align="center">
+  <img src="detection-dojo-banner.png"
+       alt="Detection Dojo - Train. Detect. Defend."
+       width="100%">
+</p>
+
 # detection-dojo
 
 **Learn detection engineering by doing it. Write a [Sigma](https://sigmahq.io) rule, and get graded offline on what it catches, what it wrongly flags, and which evasions slip past it.**
